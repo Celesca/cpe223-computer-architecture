@@ -1,45 +1,25 @@
 	.data
-array: .word -4, 5, 8, -1
-msg1: .asciiz "\n The sum of the positive values = "
-msg2: .asciiz "\n The sum of the negative values = "
+chico: .word 3, 5, 2, 7, 8, 9, 1, 4, 6, 10
+store: .asciiz "The resulting sum that store in the end of array is : "
 	.globl main
 	.text
-main:
+main:		la $t0, chico
+			li $t1, 0 # Sum the zero
+			li $t2, 10 # Length of elements to Sum
 
-	li $v0, 4 # system call code for print_str
-	la $a0, msg1 # load address of msg1. into $a0
-	syscall # print the string
+loop:		lw $t3, 0($t0) # Load the value in array
+			add $t1, $t1, $t3	# Add to sum
+			addi $t0, $t0 , 4 # Move to the next word in array
+			addi $t2, $t2 , -1 # Decrement
+			bnez $t2, loop
 
-	la $a0, array # Initialize address Parameter
-	li $a1, 4 # Initialize length Parameter
-	jal sum # Call sum
+final:      addi $t0, $t0, -4   # Move back to the last element of array chico
+            sw $t1, 0($t0)      # Store the sum in the last element of array chico
 
-	move $a0, $v0 # move value to be printed to $a0
-	li $v0, 1 # system call code for print_int
-	syscall # print sum of Pos:
+            li $v0, 4            # Print string
+            la $a0, store
+            syscall
 
-	li $v0, 4 # system call code for print_str
-	la $a0, msg2 # load address of msg2. into $a0
-	syscall # print the string
-
-	li $v0, 1 # system call code for print_int
-	move $a0, $v1 # move value to be printed to $a0
-	syscall # print sum of neg
-
-	li $v0, 10 # terminate program run and
-	syscall # return control to system
-
-sum:	li $v0, 0
-		li $v1, 0 # Initialize v0 and v1 to zero
-loop:
-		blez $a1, retzz # If (a1 <= 0) Branch to Return
-		addi $a1, $a1, -1 # Decrement loop count
-		lw $t0, 0($a0) # Get a value from the array
-		addi $a0, $a0, 4 # Increment array pointer to next word
-		bltz $t0, negg # If value is negative Branch to negg
-		add $v0, $v0, $t0 # Add to the positive sum
-		b loop # Branch around the next two instructions
-negg:
-		add $v1, $v1, $t0 # Add to the negative sum
-		b loop # Branch to loop
-retzz:	jr $ra # Return
+            li $v0, 1
+            lw $a0, 0($t0)
+            syscall

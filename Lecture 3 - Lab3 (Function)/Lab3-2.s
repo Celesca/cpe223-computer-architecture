@@ -1,55 +1,39 @@
-	.data
-array: .word -4, 5, 8, -1
-msg1: .asciiz "\n The sum of the positive values = "
-msg2: .asciiz "\n The sum of the negative values = "
-	.globl main
-	.text
-main:
+		.data
+SRC:	.word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+DEST:	.space 40
+MSG:	.asciiz "Transfer to DESC Array : "
+Spacebar: .asciiz "\n"
 
-	li $v0, 4 # system call code for print_str
-	la $a0, msg1 # load address of msg1. into $a0
-	syscall # print the string
+		.globl main
+		.text
+main:	li $t0, 10 # counter
+		la $t1, SRC # Load base address of SRC
+		la $t2, DEST # Load base address of DEST
 
-	la $a0, array # Initialize address Parameter
-	li $a1, 4 # Initialize length Parameter
-	jal MinMax # Call MinMax
+loop:	lw $t3, 0($t1) # Load word from SRC
+		sw $t3, 0($t2) # Store in DEST
+		addi $t1, $t1, 4 # Move address in SRC
+		addi $t2, $t2, 4 # Move address in DEST
+		addi $t0, $t0, -1 # Decrement
 
-	move $a0, $v0 # move value to be printed to $a0
-	li $v0, 1 # system call code for print_int
-	syscall # print sum of Pos:
+		bnez $t0, loop
 
-	li $v0, 4 # system call code for print_str
-	la $a0, msg2 # load address of msg2. into $a0
-	syscall # print the string
+		li $t0, 10 # counter
+		la $t2, DEST # initialize DEST 
 
-	li $v0, 1 # system call code for print_int
-	move $a0, $v1 # move value to be printed to $a0
-	syscall # print sum of neg
+		li $v0, 4
+		la $a0, MSG
+		syscall
 
-	li $v0, 10 # terminate program run and
-	syscall # return control to system
+result_loop:	li $v0, 1
+				lw $a0, 0($t2)
+				syscall
+				
+				li $v0, 4
+				la $a0, Spacebar
+				syscall
 
-MinMax:		li $v0, 0 # Initialize Min number
-			li $v1, 0 # Initialize Max number
-			
-loop:		addi $a0, $a0, 4
-			lw $t0, 0($a0)
-			
-			b MinMax
 
-retzz:		jr $ra
-
-sum:	li $v0, 0
-		li $v1, 0 # Initialize v0 and v1 to zero
-loop:
-		blez $a1, retzz # If (a1 <= 0) Branch to Return
-		addi $a1, $a1, -1 # Decrement loop count
-		lw $t0, 0($a0) # Get a value from the array
-		addi $a0, $a0, 4 # Increment array pointer to next word
-		bltz $t0, negg # If value is negative Branch to negg
-		add $v0, $v0, $t0 # Add to the positive sum
-		b loop # Branch around the next two instructions
-negg:
-		add $v1, $v1, $t0 # Add to the negative sum
-		b loop # Branch to loop
-retzz:	jr $ra # Return
+				addi $t2, $t2, 4 # Move to next element
+				addi $t0, $t0, -1 #Decrement
+				bnez $t0, result_loop

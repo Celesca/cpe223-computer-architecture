@@ -2,10 +2,16 @@
 array:  .word 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 result: .asciiz "The sum of number in array is "
 
+.globl main
 .text
 main:
     li $t0, 0         # $t0 - loop counter
     li $t1, 0         # $t1 - sum
+
+    # Print a newline
+    li $v0, 4           # System call code for printing a string
+    la $a0, result     # Load the address of the newline string
+    syscall
 
     # Loop to sum the array elements
     loop:
@@ -15,12 +21,6 @@ main:
 
         # Check if the end of the array is reached
         blt $t0, 40, loop     # Branch to loop if $t0 < 40
-
-    
-    # Print a newline
-    li $v0, 4           # System call code for printing a string
-    la $a0, result     # Load the address of the newline string
-    syscall
 
     # Print the result
     move $a0, $t1       # Set $a0 to the sum
