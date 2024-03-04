@@ -16,7 +16,9 @@ main:
     # Loop to sum the array elements
     loop:
         lw $t2, array($t0)    # Load array element at index $t0 into $t2
+
         add $t1, $t1, $t2     # Add the element to the sum
+
         addi $t0, $t0, 4      # Move to the next array element (each element is 4 bytes)
 
         # Check if the end of the array is reached
