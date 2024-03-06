@@ -1,34 +1,15 @@
-def booth_multiplication(multiplier, multiplicand):
-    # Step 1: Initialize the product and accumulator
-    product = 0
-    accumulator = 0
+M = input("Enter multiplicand: ") # ตัวตั้ง
+Q = int(input("Multiplier: ")) # ตัวคูณ
 
-    # Step 2: Determine the number of bits in the multiplier and multiplicand
-    num_bits = max(len(bin(multiplier)), len(bin(multiplicand))) - 2
+# Q[-1] and QMinus1
 
-    # Step 3: Perform the multiplication
-    for i in range(num_bits):
-        # Check the least significant bit of the multiplier
-        if multiplier & 1:
-            if accumulator & 1:
-                # Subtract the multiplicand from the accumulator
-                accumulator -= multiplicand
-        else:
-            if accumulator & 1:
-                # Add the multiplicand to the accumulator
-                accumulator += multiplicand
+Q = bin(Q)
+print(Q)
+print(type(Q))
 
-        # Right shift the multiplier and accumulator
-        multiplier >>= 1
-        accumulator >>= 1
+# A - M = A + (-M) Which is make -M to 2's complement
 
-    # Step 4: Combine the product and accumulator to get the final result
-    product = (accumulator << num_bits) | multiplier
+# Arithmetic Shift Right
 
-    return product
-
-# Example usage
-multiplier = 0b00001010  # Binary representation of 0A
-multiplicand = 0b00000010  # Binary representation of 10
-result = booth_multiplication(multiplier, multiplicand)
-print(f"The result of {multiplier} * {multiplicand} is {result}")
+# ตัวหน้าเป็นอะไร ตัวที่ใส่เข้ามาด้านหน้าจะเป็นตัวเดิม
+# bit ของ Q (ตัวคูณ)
